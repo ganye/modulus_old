@@ -69,5 +69,9 @@ class Console(object):
         self.write("%s " % self.cursor)
         if self.current_module:
             self.set_color('bold')
-            self.write("(%s)" % self.current_module)
+            self.write("(%s) " % self.current_module)
         self.set_color("white")
+        
+    def get_input(self):
+        self.prompt()
+        return self.readln()
