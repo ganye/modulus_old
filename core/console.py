@@ -6,6 +6,7 @@ Created on Feb 5, 2014
 from Queue import Queue
 import sys
 
+from core.excep import ModulusError
 from core.colors import Color
 
 class Console(object):
@@ -27,7 +28,7 @@ class Console(object):
         self.ostream.write(output)
         
     def writeln(self, output):
-        self.istream.write(output + "\n")
+        self.write(output + "\n")
         
     def readln(self):
         return self.istream.readline()
@@ -75,3 +76,6 @@ class Console(object):
     def get_input(self):
         self.prompt()
         return self.readln()
+    
+    def handle_input(self, input):
+        pass
