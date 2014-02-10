@@ -8,4 +8,5 @@ from core.console import Console
 if __name__ == '__main__':
     console = Console()
     while True:
-        console.get_input()
+        user_input = console.get_input()
+        console.handle_input(user_input)

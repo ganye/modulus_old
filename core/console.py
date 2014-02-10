@@ -5,15 +5,19 @@ Created on Feb 5, 2014
 '''
 from Queue import Queue
 import sys
+import os
+import re
 
 from core.excep import ModulusError
 from core.colors import Color
+from lib.path import get_base_dir
 
 class Console(object):
     '''
     classdocs
     '''
     color = Color()
+    commands = {}
     cursor = ">"
     current_module = None
     def __init__(self, istream=sys.stdin, ostream=sys.stdout):
@@ -23,6 +27,8 @@ class Console(object):
         self.istream = istream
         self.ostream = ostream
         self.stack = Queue()
+        
+        self.load_commands()
         
     def write(self, output):
         self.ostream.write(output)
@@ -77,5 +83,40 @@ class Console(object):
         self.prompt()
         return self.readln()
     
-    def handle_input(self, input):
-        pass
+    def handle_input(self, user_input):
+        """
+        TODO: clean this up; make it work.
+        """
+        user_command = user_input.split()[0]
+        
+        for pattern, command in self.commands.items():
+            if pattern.match(user_command):
+                run = command(self)
+                run.caller(*user_input.split()[1:])
+                return
+        self.error("command '%s' not found." % user_command)
+    
+    def quit(self):
+        sys.exit("Cleaning up...")
+        
+    def list_commands(self):
+        command_list = []
+        files = os.listdir(os.path.join(get_base_dir(), 'commands'))
+        self.debug("Files: %s" % files)
+        pattern = re.compile(r'^.+\.py$')
+        for file_ in files:
+            if re.match(pattern, file_) and not file_.startswith('_'):
+                file_ = file_.rstrip(".py")
+                command_list.append(file_)
+        return command_list
+                
+    def load_commands(self):
+        command_list = self.list_commands()
+        for command in command_list:
+            self.debug("Importing %s..." % command)
+            module = __import__(("commands.%s" % command), fromlist=[command.title()])
+            klass = getattr(module, command.title())
+            validcallers = getattr(module, '__validcallers__')
+            
+            for caller in validcallers:
+                self.commands[re.compile('%s' % caller)] = klass
