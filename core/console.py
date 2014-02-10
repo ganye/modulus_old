@@ -87,16 +87,18 @@ class Console(object):
         """
         TODO: clean this up; make it work.
         """
-        user_command = user_input.split()[0]
+        user_input = user_input.split()
+        user_command = user_input[0]
+        args = user_input[1:]
         
         for pattern, command in self.commands.items():
             if pattern.match(user_command):
                 run = command(self)
-                run.caller(*user_input.split()[1:])
+                run.caller(*args)
                 return
         self.error("command '%s' not found." % user_command)
     
-    def quit(self):
+    def exit(self):
         sys.exit("Cleaning up...")
         
     def list_commands(self):
@@ -106,7 +108,7 @@ class Console(object):
         pattern = re.compile(r'^.+\.py$')
         for file_ in files:
             if re.match(pattern, file_) and not file_.startswith('_'):
-                file_ = file_.rstrip(".py")
+                file_ = file_.split(".")[0]
                 command_list.append(file_)
         return command_list
                 
@@ -116,7 +118,7 @@ class Console(object):
             self.debug("Importing %s..." % command)
             module = __import__(("commands.%s" % command), fromlist=[command.title()])
             klass = getattr(module, command.title())
-            validcallers = getattr(module, '__validcallers__')
-            
-            for caller in validcallers:
-                self.commands[re.compile('%s' % caller)] = klass
+            validcallers = getattr(klass, '__validcallers__')
+
+            # import pdb; pdb.set_trace()
+            self.commands[re.compile('%s' % validcallers)] = klass
