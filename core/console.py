@@ -20,13 +20,15 @@ class Console(object):
     commands = {}
     cursor = ">"
     current_module = None
-    def __init__(self, istream=sys.stdin, ostream=sys.stdout):
+    def __init__(self, istream=sys.stdin, ostream=sys.stdout, enable_colors=True):
         '''
         Constructor
         '''
         self.istream = istream
         self.ostream = ostream
-        self.stack = Queue()
+        
+        if not enable_colors:
+            self.disable_color()
         
         self.load_commands()
         
@@ -46,6 +48,12 @@ class Console(object):
             self.exception("invalid color '%s'" % color)
         else:
             self.write(newcolor)
+
+    def disable_color(self):
+        self.color.disable()
+        
+    def enable_color(self):
+        self.color.enable()
             
     def debug(self, message):
         self.set_color("dark_blue")
