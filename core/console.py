@@ -11,6 +11,7 @@ import re
 from core.excep import ModulusError
 from core.colors import Color
 from lib.path import get_base_dir
+from lib.sysinfo import is_windows
 
 class Console(object):
     '''
@@ -20,15 +21,16 @@ class Console(object):
     commands = {}
     cursor = ">"
     current_module = None
-    def __init__(self, istream=sys.stdin, ostream=sys.stdout, enable_colors=True):
+    def __init__(self, istream=sys.stdin, ostream=sys.stdout, colors=True):
         '''
         Constructor
         '''
         self.istream = istream
         self.ostream = ostream
         
-        if not enable_colors:
+        if not colors or is_windows():
             self.disable_color()
+            self.debug('disabling colors...')
         
         self.load_commands()
         

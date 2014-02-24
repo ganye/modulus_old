@@ -31,9 +31,9 @@ if __name__ == '__main__':
     else:
         ostream = sys.stdout
     
-    enable_colors = not args.disable_colors
+    colors = not args.disable_colors
     
-    console = Console(istream=istream, ostream=ostream, enable_colors=enable_colors)
+    console = Console(istream=istream, ostream=ostream, colors=colors)
     while True:
         user_input = console.get_input()
         console.handle_input(user_input)
