@@ -3,12 +3,10 @@ Created on Feb 5, 2014
 
 @author: ganye
 '''
-from Queue import Queue
 import sys
 import os
 import re
 
-from core.excep import ModulusError
 from core.colors import Color
 from lib.path import get_base_dir
 from lib.sysinfo import is_windows
@@ -94,9 +92,6 @@ class Console(object):
         return self.readln()
     
     def handle_input(self, user_input):
-        """
-        TODO: clean this up; make it work.
-        """
         user_input = user_input.split()
         user_command = user_input[0]
         args = user_input[1:]
