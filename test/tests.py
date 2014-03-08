@@ -3,14 +3,13 @@ Created on Feb 5, 2014
 
 @author: ganye
 '''
-import lib.network
+import lib.path
 import unittest
 
 
 class Test(unittest.TestCase):
-    def testMAC(self):
-        self.assertEquals(lib.network.get_mac_address('eth0'),
-                          '08:60:6e:0c:1a:ff')
+    def test_file_path(self):
+        self.assertEqual(lib.path.get_file_path('dev','null'), '/dev/null')
 
 
 if __name__ == "__main__":

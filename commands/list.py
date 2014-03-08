@@ -7,7 +7,7 @@ import os
 import re
 
 from core.command import Command
-from lib.path import get_base_dir
+from lib.path import *
 
 class List(Command):
     
@@ -21,13 +21,9 @@ class List(Command):
         if not args:
             args = []
         
-        # Convert args to a file path
-        mod_path = '/modules'
-        search_path = mod_path + '/'.join(args) + '/'
-        
-        # Remove any double /'s
-        search_path = search_path.replace('//', '/')
-        abs_path = get_base_dir() + search_path
+        modules_path = os.path.join('modules/')
+        search_path = os.path.join(modules_path, '/'.join(args))
+        abs_path = os.path.abspath(os.path.join(get_base_dir(), search_path))
         
         try:
             # Get a list of all directories and files
@@ -42,9 +38,9 @@ class List(Command):
         pattern = re.compile(r"^.+\.py$")
         for item in found_items:
             # Get the absolute path for the item
-            item_path = os.path.abspath(abs_path + item)
+            item_path = os.path.abspath(os.path.join(abs_path, item))
             if pattern.match(item) and not item.startswith("_"):
                 item = item.replace(".py","")
-                self.console.writeln("%s" % (search_path + item))
+                self.console.writeln("%s" % (os.path.join(search_path, item)))
             elif os.path.isdir(item_path):
-                self.console.writeln('%s/' % (search_path + item))
+                self.console.writeln('%s/' % (os.path.join(search_path, item)))
