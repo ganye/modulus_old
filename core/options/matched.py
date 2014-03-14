@@ -15,7 +15,9 @@ class MatchedOption(BaseOption):
         self.validate(value)
         
     def validate(self, value):
-        if self.pattern.match(value):
+        if value is None:
+            return
+        elif self.pattern.match(value):
             self._value = value
         else:
             raise ModulusError("'%s' is not a valid value." % value)

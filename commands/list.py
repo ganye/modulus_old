@@ -7,7 +7,7 @@ import os
 import re
 
 from core.command import Command
-from lib.path import *
+from lib.path import get_base_dir
 
 class List(Command):
     
@@ -20,9 +20,8 @@ class List(Command):
         
         if not args:
             args = []
-        
-        modules_path = os.path.join('modules/')
-        search_path = os.path.join(modules_path, '/'.join(args))
+
+        search_path = os.path.join('modules/', '/'.join(args))
         abs_path = os.path.abspath(os.path.join(get_base_dir(), search_path))
         
         try:

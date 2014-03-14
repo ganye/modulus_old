@@ -3,6 +3,7 @@ Created on Feb 5, 2014
 
 @author: ganye
 '''
+import traceback
 import sys
 import os
 import re
@@ -54,6 +55,12 @@ class Console(object):
         
     def enable_color(self):
         self.color.enable()
+            
+    def warning(self, message):
+        self.set_color("purple")
+        self.write("[!] warning: ")
+        self.set_color("white")
+        self.writeln("%s" % message)
             
     def debug(self, message):
         self.set_color("dark_blue")
@@ -125,5 +132,31 @@ class Console(object):
             klass = getattr(module, command.title())
             validcallers = getattr(klass, '__validcallers__')
 
-            # import pdb; pdb.set_trace()
             self.commands[re.compile('%s' % validcallers)] = klass
+            
+    def set_module(self, new_module):
+        name = new_module.split("/")[-1]
+        # Replace forward slashes with dots for importing
+        module_path = new_module.replace("/", ".")
+        # Strip the first dot
+        module_path = module_path.lstrip(".")
+        
+        # Load the actual module class
+        try:
+            module = __import__(module_path, fromlist=[name])
+        except SyntaxError, e:
+            self.exception("module contains a syntax error and cannot be loaded")
+            traceback.print_exc(e)
+            return
+        
+        try:
+            name = getattr(module, '__module__')
+        except AttributeError:
+            self.warning("module does not contain a __module__ attribute - " \
+                "defaulting to %s" % name.title())
+            name = name.title()
+            
+        klass = getattr(module, name)
+        
+        self.module = klass(self)
+        self.current_module = new_module

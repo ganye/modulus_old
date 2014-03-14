@@ -6,7 +6,7 @@ from scapy.all import Ether, ARP, srp, conf
 from core.modules.base import BaseModule
 from options import *
 
-__module__ = "Arping"
+# __module__ = "Arping"
 
 class Arping(BaseModule):
     def initialize(self):
